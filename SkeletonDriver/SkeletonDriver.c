@@ -11,6 +11,9 @@ static void __exit exit_driver(void) {
 }
 
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Francisco Charte");
+MODULE_VERSION("0.1");
+MODULE_DESCRIPTION("Sample skeleton of a device driver module");
 
 module_init(init_driver)
 module_exit(exit_driver)
