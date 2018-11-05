@@ -29,15 +29,19 @@ static int __init init_driver(void) {
     int n_device;
     dev_t id_device;
 
-    if (alloc_chrdev_region(&major_minor, 0, NUM_DEVICES, DRIVER_NAME) < 0)
-       goto error1;
+    if (alloc_chrdev_region(&major_minor, 0, NUM_DEVICES, DRIVER_NAME) < 0) {
+       pr_err("Major number assignment failed");
+       goto error;
+    }
 
     /* En este momento el controlador tiene asignado un "major number"
        Podemos consultarlo mirando en /proc/devices */
     pr_info("%s driver assigned %d major number\n", DRIVER_NAME, MAJOR(major_minor));
 
-    if((ECCclass = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL)
-       goto error2;
+    if((ECCclass = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) {
+       pr_err("Class device registering failed");
+       goto error;
+    }
 
     /* En este momento la clase de dispositivo aparece en /sys/class */
     pr_info("/sys/class/%s class driver registered\n", DRIVER_CLASS);
@@ -46,11 +50,15 @@ static int __init init_driver(void) {
        cdev_init(&ECCcdev[n_device], &ECC_fops);
 
        id_device = MKDEV(MAJOR(major_minor), MINOR(major_minor) + n_device);
-       if(cdev_add(&ECCcdev[n_device], id_device, 1) == -1)
-          goto error3;
+       if(cdev_add(&ECCcdev[n_device], id_device, 1) == -1) {
+          pr_err("Device node creation failed");
+          goto error;
+       }
 
-       if(device_create(ECCclass, NULL, id_device, NULL, DRIVER_NAME "%d", n_device) == NULL)
-          goto error3;
+       if(device_create(ECCclass, NULL, id_device, NULL, DRIVER_NAME "%d", n_device) == NULL) {
+          pr_err("Device node creation failed");
+          goto error;
+       }
 
        pr_info("Device node /dev/%s%d created\n", DRIVER_NAME, n_device);
     }
@@ -60,20 +68,14 @@ static int __init init_driver(void) {
     pr_info("ECC driver initialized and loaded\n");
     return 0;
 
-error1:
-    pr_err("Major number assignment failed");
+error:
+    if(ECCclass) 
+       class_destroy(ECCclass);
+
+    if(major_minor != -1)
+       unregister_chrdev_region(major_minor, 1);
+
     return -1;
-
-error2: 
-    pr_err("Class device registering failed");
-    unregister_chrdev_region(major_minor, 1);
-    return -2;
-
-error3:
-    pr_err("Device node creation failed");
-    class_destroy(ECCclass);
-    unregister_chrdev_region(major_minor, 1);
-    return -3;
 }
 
 static void __exit exit_driver(void) {
@@ -84,11 +86,9 @@ static void __exit exit_driver(void) {
        cdev_del(&ECCcdev[n_device]);
     }
     
-    if(ECCclass) 
-       class_destroy(ECCclass);
+    class_destroy(ECCclass);
 
-    if(major_minor != -1)
-       unregister_chrdev_region(major_minor, 1);
+    unregister_chrdev_region(major_minor, 1);
 
     pr_info("ECC driver unloaded\n");
 }
