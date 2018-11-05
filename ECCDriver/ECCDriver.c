@@ -12,16 +12,30 @@ static struct cdev ECCcdev[NUM_DEVICES];
 static struct class *ECCclass = NULL;
 
 static int ECCopen(struct inode *inode, struct file *file) {
+   pr_info("ECCopen");
+   return 0;
+}
+
+static ssize_t ECCread(struct file *file, char __user *buffer, size_t count, loff_t *f_pos) {
+   pr_info("ECCread");
+   return 0;
+}
+
+static ssize_t ECCwrite(struct file *file, const char __user *buffer, size_t count, loff_t *f_pos) {
+   pr_info("ECCwrite");
    return 0;
 }
 
 static int ECCrelease(struct inode *inode, struct file *file) {
+   pr_info("ECCrelease");
    return 0;
 }
 
 static const struct file_operations ECC_fops = {
    .owner = THIS_MODULE,
    .open = ECCopen,
+   .read = ECCread,
+   .write = ECCwrite,
    .release = ECCrelease,
 };
 
