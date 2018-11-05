@@ -34,11 +34,13 @@ static int __init init_driver(void) {
 
     /* En este momento el controlador tiene asignado un "major number"
        Podemos consultarlo mirando en /proc/devices */
+    pr_info("%s driver assigned %d major number\n", DRIVER_NAME, MAJOR(major_number));
 
     if((ECCclass = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL)
        goto error2;
 
     /* En este momento la clase de dispositivo aparece en /sys/class */
+    pr_info("/sys/class/%s class driver registered\n", DRIVER_CLASS);
 
     for (n_device = 0; n_device < NUM_DEVICES; n_device++) {
        cdev_init(&ECCcdev[n_device], &ECC_fops);
@@ -49,6 +51,8 @@ static int __init init_driver(void) {
 
        if(device_create(ECCclass, NULL, id_device, NULL, DRIVER_NAME "%d", n_device) == NULL)
           goto error3;
+
+       pr_info("Device node /dev/%s%d created\n", DRIVER_NAME, n_device);
     }
 
     /* En este momento en /dev aparecerán los dispositivos ECCDriverN y en /sys/class/ECCDriver también */
