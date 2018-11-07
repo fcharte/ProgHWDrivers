@@ -16,7 +16,7 @@
 
 static dev_t major_minor = -1;
 static struct cdev ECCcdev[NUM_DEVICES];
-static struct class *ECCclass;
+static struct class *ECCclass = NULL;
 
 /* ============ Funciones que implementan las operaciones del controlador ============= */
 
