@@ -16,7 +16,7 @@
 
 static dev_t major_minor = -1;
 static struct cdev ECCcdev[NUM_DEVICES];
-static struct class *ECCclass = NULL;
+static struct class *ECCclass;
 
 /* ============ Funciones que implementan las operaciones del controlador ============= */
 
@@ -52,6 +52,11 @@ static const struct file_operations ECC_fops = {
 
 /* ============ Inicialización del controlador ============= */
 
+static int ECCdev_uevent(struct device *dev, struct kobj_uevent_env *env) {
+   add_uevent_var(env, "DEVMODE=%#o", 0666);
+   return 0;
+}
+
 static int __init init_driver(void) {
     int n_device;
     dev_t id_device;
@@ -68,7 +73,8 @@ static int __init init_driver(void) {
     if((ECCclass = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) {
        pr_err("Class device registering failed");
        goto error;
-    }
+    } else
+       ECCclass->dev_uevent = ECCdev_uevent; /* Evento para configurar los permisos de acceso */
 
     /* En este momento la clase de dispositivo aparece en /sys/class */
     pr_info("/sys/class/%s class driver registered\n", DRIVER_CLASS);
