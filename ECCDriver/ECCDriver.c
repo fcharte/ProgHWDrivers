@@ -1,3 +1,10 @@
+/*
+    ECCDriver.c 
+
+    ECC - Esqueleto de controlador completo
+    Noviembre 2018 - Francisco Charte
+*/
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/cdev.h>
@@ -5,11 +12,13 @@
 
 #define DRIVER_NAME	"ECCDriver"
 #define DRIVER_CLASS	"ECCDriverClass"
-#define NUM_DEVICES	3
+#define NUM_DEVICES	3  /* Número de dispositivos a crear */
 
 static dev_t major_minor = -1;
 static struct cdev ECCcdev[NUM_DEVICES];
 static struct class *ECCclass = NULL;
+
+/* ============ Funciones que implementan las operaciones del controlador ============= */
 
 static int ECCopen(struct inode *inode, struct file *file) {
    pr_info("ECCopen");
@@ -31,6 +40,8 @@ static int ECCrelease(struct inode *inode, struct file *file) {
    return 0;
 }
 
+/* ============ Estructura con las operaciones del controlador ============= */
+
 static const struct file_operations ECC_fops = {
    .owner = THIS_MODULE,
    .open = ECCopen,
@@ -38,6 +49,8 @@ static const struct file_operations ECC_fops = {
    .write = ECCwrite,
    .release = ECCrelease,
 };
+
+/* ============ Inicialización del controlador ============= */
 
 static int __init init_driver(void) {
     int n_device;
@@ -92,6 +105,8 @@ error:
     return -1;
 }
 
+/* ============ Descarga del controlador ============= */
+
 static void __exit exit_driver(void) {
     int n_device;
 
@@ -106,6 +121,8 @@ static void __exit exit_driver(void) {
 
     pr_info("ECC driver unloaded\n");
 }
+
+/* ============ Meta-datos ============= */
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Francisco Charte");
