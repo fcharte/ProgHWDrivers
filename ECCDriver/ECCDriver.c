@@ -32,7 +32,7 @@ static ssize_t ECCread(struct file *file, char __user *buffer, size_t count, lof
 
 static ssize_t ECCwrite(struct file *file, const char __user *buffer, size_t count, loff_t *f_pos) {
    pr_info("ECCwrite");
-   return 0;
+   return -EINVAL;
 }
 
 static int ECCrelease(struct inode *inode, struct file *file) {
@@ -123,7 +123,7 @@ static void __exit exit_driver(void) {
     
     class_destroy(ECCclass);
 
-    unregister_chrdev_region(major_minor, 1);
+    unregister_chrdev_region(major_minor, NUM_DEVICES);
 
     pr_info("ECC driver unloaded\n");
 }
