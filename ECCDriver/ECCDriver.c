@@ -106,7 +106,7 @@ error:
        class_destroy(ECCclass);
 
     if(major_minor != -1)
-       unregister_chrdev_region(major_minor, 1);
+       unregister_chrdev_region(major_minor, NUM_DEVICES);
 
     return -1;
 }
