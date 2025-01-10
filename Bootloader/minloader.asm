@@ -16,4 +16,4 @@ exit:
 Prompt:	db "ProgHardSO 1.0", 13, 10,0   
 
 times 510 - ($ - $$) db 0  ; Rellenar con ceros
-dw 0xAA55  ; hasta los dos últimos bytes, firma bootloader
+dw 0xAA55  ; hasta los dos últimos bytes: firma bootloader
