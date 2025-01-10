@@ -29,6 +29,6 @@ loop:
   JMP loop
 
 exit:
-  MOV AH,4Ch
+  MOV AH,4Ch ; 
   INT 21h
 
