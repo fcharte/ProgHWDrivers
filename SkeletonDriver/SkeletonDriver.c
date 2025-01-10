@@ -17,4 +17,3 @@ MODULE_DESCRIPTION("Sample skeleton of a device driver module");
 
 module_init(init_driver)
 module_exit(exit_driver)
-
