@@ -5,3 +5,4 @@ Entrar en el directorio correspondiente y ejecutar el siguiente comando para gen
 ```
 make M=`pwd`
 ```
+Seguir las indicaciones facilitadas en el material de clase para estos ejercicios.
